@@ -12,7 +12,7 @@ ASII is being developed for regulated institutions. The current institutional-en
 - Package manager: npm
 - Runtime policy: Node.js 22.x
 - Hosting: Vercel
-- Current public deployment: <https://asii-intelligence.vercel.app>
+- Current public deployment: <https://asii.site>
 
 The active application is defined by `app/`, `components/`, `data/`, and `lib/`. Historical static pages are retained only under `archive/` and are not part of the deployed application.
 
