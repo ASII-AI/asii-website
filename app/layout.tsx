@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://asii-intelligence.vercel.app"),
+  metadataBase: new URL("https://asii.site"),
   title: {
     default: "ASII | Financial Crime Intelligence Infrastructure",
     template: "%s | ASII",
