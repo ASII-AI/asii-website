@@ -163,14 +163,15 @@ export function ReportWorkspace() {
           <div className="mt-4 rounded-lg border border-blue-300/10 bg-bg/40 p-3 text-xs text-blue-100/65">
             <p>
               Eligibility:{" "}
-              <span className={decision.allowed ? "text-emerald-300" : "text-amber-300"}>
+              <span
+                className={
+                  decision.allowed ? "text-emerald-300" : "text-amber-300"
+                }
+              >
                 {decision.allowed ? "OPEN" : "BLOCKED"}
               </span>
             </p>
-            <p>
-              Report generated:{" "}
-              {state.reportGeneratedAt ?? "Not yet"}
-            </p>
+            <p>Report generated: {state.reportGeneratedAt ?? "Not yet"}</p>
           </div>
         </Card>
       </div>
