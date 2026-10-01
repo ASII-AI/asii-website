@@ -313,13 +313,9 @@ export function transitionCase(
         throw new Error(`Unknown signal: ${action.signalId}`);
       }
 
-      return appendAuditEvent(
-        state,
-        "SIGNAL_OPENED",
-        action.actor,
-        action.at,
-        { signalId: action.signalId },
-      ).state;
+      return appendAuditEvent(state, "SIGNAL_OPENED", action.actor, action.at, {
+        signalId: action.signalId,
+      }).state;
     }
 
     case "LINK_EVIDENCE": {
