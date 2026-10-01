@@ -12,8 +12,9 @@ export function SignalsWorkspace() {
         Fragmented Signals Module
       </h1>
       <p className="mb-4 text-sm text-blue-100/70">
-        Canonical synthetic case: <span className="text-accent">{state.caseId}</span>.
-        Opening a signal appends an attributable audit event.
+        Canonical synthetic case:{" "}
+        <span className="text-accent">{state.caseId}</span>. Opening a signal
+        appends an attributable audit event.
       </p>
 
       {lastError && (
