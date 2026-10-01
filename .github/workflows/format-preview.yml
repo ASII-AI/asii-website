@@ -1,0 +1,29 @@
+name: Temporary format preview
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Format target files
+        run: npx prettier --write lib/demo/asii-tr-001.ts tests/asii-tr-001.test.ts
+      - name: Print formatted files
+        run: |
+          echo "<<<ASII_TR_001_TS>>>"
+          cat lib/demo/asii-tr-001.ts
+          echo "<<<ASII_TR_001_TS_END>>>"
+          echo "<<<ASII_TR_001_TEST_TS>>>"
+          cat tests/asii-tr-001.test.ts
+          echo "<<<ASII_TR_001_TEST_TS_END>>>"
