@@ -1,7 +1,4 @@
-import {
-  CANONICAL_DEMO_CASE_ID,
-  type DemoCaseState,
-} from "./asii-tr-001";
+import { CANONICAL_DEMO_CASE_ID, type DemoCaseState } from "./asii-tr-001";
 
 export const DEMO_CASE_STORAGE_KEY = "asii.demo.asii-tr-001.v1";
 
