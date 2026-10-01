@@ -2,10 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { useDemoCase } from "@/components/demo/demo-case-provider";
-import {
-  getCaseStage,
-  getEvidenceCompleteness,
-} from "@/lib/demo/asii-tr-001";
+import { getCaseStage, getEvidenceCompleteness } from "@/lib/demo/asii-tr-001";
 import { timeline } from "@/data/mock-data";
 
 export function ContinuityWorkspace() {
@@ -78,9 +75,7 @@ export function ContinuityWorkspace() {
                   <p className="font-medium text-white">
                     {item.evidenceObjectId} · {item.signalId}
                   </p>
-                  <span className="text-accent">
-                    {item.verificationState}
-                  </span>
+                  <span className="text-accent">{item.verificationState}</span>
                 </div>
                 <p className="mt-2">Source: {item.source}</p>
                 <p>Type: {item.sourceType}</p>
