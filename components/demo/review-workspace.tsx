@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useDemoCase } from "@/components/demo/demo-case-provider";
-import {
-  getCaseStage,
-  getEvidenceCompleteness,
-} from "@/lib/demo/asii-tr-001";
+import { getCaseStage, getEvidenceCompleteness } from "@/lib/demo/asii-tr-001";
 
 const defaultAnalystRationale =
   "Multiple independent synthetic signals converge on the same entity and transfer chain. Escalation is warranted for MLRO review, subject to confirmation of the missing beneficiary institution detail.";
@@ -37,9 +34,9 @@ export function ReviewWorkspace() {
         Analyst Review Workspace
       </h1>
       <p className="mb-4 text-sm text-blue-100/70">
-        {state.caseId} · {stage} · evidence completeness {completeness}%.
-        Human actions below write attributable audit events to the canonical
-        synthetic case.
+        {state.caseId} · {stage} · evidence completeness {completeness}%. Human
+        actions below write attributable audit events to the canonical synthetic
+        case.
       </p>
 
       {lastError && (
