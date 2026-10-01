@@ -87,7 +87,8 @@ describe("ASII-TR-001 canonical demo state", () => {
       type: "APPROVE_BY_MLRO",
       actor: "mlro-001",
       at: "2026-10-02T10:15:00Z",
-      rationale: "Reviewed evidence and analyst rationale; approved for demo export.",
+      rationale:
+        "Reviewed evidence and analyst rationale; approved for demo export.",
     });
     expect(getCaseStage(state)).toBe("MLRO_APPROVED");
     expect(getEvidenceCompleteness(state)).toBe(92);
