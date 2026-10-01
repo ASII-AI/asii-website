@@ -57,7 +57,10 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(DEMO_CASE_STORAGE_KEY, serializeDemoCase(state));
+    window.localStorage.setItem(
+      DEMO_CASE_STORAGE_KEY,
+      serializeDemoCase(state),
+    );
   }, [hydrated, state]);
 
   const applyAction = useCallback(
@@ -69,7 +72,9 @@ export function DemoCaseProvider({ children }: { children: ReactNode }) {
         return { ok: true };
       } catch (error) {
         const message =
-          error instanceof Error ? error.message : "Demo state transition failed";
+          error instanceof Error
+            ? error.message
+            : "Demo state transition failed";
         setLastError(message);
         return { ok: false, error: message };
       }
