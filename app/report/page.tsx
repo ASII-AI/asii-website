@@ -1,18 +1,6 @@
 import type { Metadata } from "next";
 import { Shell } from "@/components/layout/shell";
-import { Card } from "@/components/ui/card";
-
-const sections = [
-  "Case summary",
-  "Risk rationale",
-  "Evidence table",
-  "Timeline of events",
-  "Sources reviewed",
-  "Analyst decisions",
-  "Explainability section",
-  "Audit log",
-  "Recommended next action",
-];
+import { ReportWorkspace } from "@/components/demo/report-workspace";
 
 export const metadata: Metadata = {
   title: "Reporting Workflow Demo",
@@ -22,34 +10,7 @@ export const metadata: Metadata = {
 export default function ReportPage() {
   return (
     <Shell active="/report">
-      <h1 className="mb-4 text-2xl font-semibold text-white">
-        Human-Reviewed Reporting Preparation Demo
-      </h1>
-      <p className="mb-6 max-w-3xl text-sm leading-relaxed text-blue-100/70">
-        Synthetic demonstration only. The output is reviewable working material
-        for reporting preparation and does not represent regulator approval,
-        acceptance, filing readiness, or a production reporting state.
-      </p>
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <ul className="space-y-2 text-sm text-blue-100/80">
-            {sections.map((s) => (
-              <li key={s}>• {s}</li>
-            ))}
-          </ul>
-        </Card>
-        <Card>
-          <h3 className="text-white font-medium">Export Actions</h3>
-          <div className="mt-3 space-y-2">
-            <button className="w-full rounded-lg border border-blue-300/25 bg-blue-500/10 px-3 py-2 text-sm">
-              Export PDF (Mock)
-            </button>
-            <button className="w-full rounded-lg border border-blue-300/25 bg-blue-500/10 px-3 py-2 text-sm">
-              Export DOCX (Mock)
-            </button>
-          </div>
-        </Card>
-      </div>
+      <ReportWorkspace />
     </Shell>
   );
 }
