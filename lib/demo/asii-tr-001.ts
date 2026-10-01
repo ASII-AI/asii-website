@@ -1,4 +1,4 @@
-import { signals as syntheticSignals } from "@/data/mock-data";
+import { signals as syntheticSignals } from "../../data/mock-data";
 
 export const CANONICAL_DEMO_CASE_ID = "ASII-TR-001" as const;
 
