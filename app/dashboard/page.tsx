@@ -40,8 +40,7 @@ export default function DashboardPage() {
 
           <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
             <p>
-              Selected case:{" "}
-              <span className="text-accent">{state.caseId}</span>
+              Selected case: <span className="text-accent">{state.caseId}</span>
             </p>
             <p>
               Case status:{" "}
@@ -142,7 +141,9 @@ export default function DashboardPage() {
               Completeness checked:{" "}
               {state.completenessCheckedAt ? "✅" : "Pending"}
             </li>
-            <li>MLRO approval recorded: {state.mlroApproval ? "✅" : "Pending"}</li>
+            <li>
+              MLRO approval recorded: {state.mlroApproval ? "✅" : "Pending"}
+            </li>
             <li>
               Demo report generated:{" "}
               {state.reportGeneratedAt ? "✅" : "Pending"}
