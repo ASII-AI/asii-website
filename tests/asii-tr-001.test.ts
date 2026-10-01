@@ -6,7 +6,7 @@ import {
   getEvidenceCompleteness,
   getExportDecision,
   transitionCase,
-} from "@/lib/demo/asii-tr-001";
+} from "../lib/demo/asii-tr-001";
 
 function readyForApproval() {
   let state = createInitialDemoCase();
