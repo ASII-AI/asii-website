@@ -21,6 +21,12 @@ export function SiteFooter() {
           <Link className="transition hover:text-text" href="/platform">
             Platform
           </Link>
+          <a
+            className="transition hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
+            href="mailto:contact@asii.site"
+          >
+            contact@asii.site
+          </a>
           <Link className="transition hover:text-text" href="/contact">
             Contact
           </Link>
