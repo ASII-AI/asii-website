@@ -81,10 +81,10 @@ export default function ContactPage() {
               <strong className="text-white">Email</strong>
               <br />
               <a
-                href="mailto:sukhrobziyovuddinov@gmail.com"
-                className="text-cyan-300 hover:text-cyan-200"
+                href="mailto:contact@asii.site"
+                className="break-words text-cyan-300 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
               >
-                sukhrobziyovuddinov@gmail.com
+                contact@asii.site
               </a>
             </div>
 
@@ -93,7 +93,7 @@ export default function ContactPage() {
               <br />
               <a
                 href="https://wa.me/971547590101"
-                className="text-cyan-300 hover:text-cyan-200"
+                className="break-words text-cyan-300 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
               >
                 +971 54 759 01 01
               </a>
@@ -102,7 +102,14 @@ export default function ContactPage() {
             <div>
               <strong className="text-white">LinkedIn</strong>
               <br />
-              <span className="text-cyan-300">szdxb</span>
+              <a
+                href="https://www.linkedin.com/company/asii-intelligence/"
+                className="text-cyan-300 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
+                target="_blank"
+                rel="noreferrer"
+              >
+                ASII on LinkedIn
+              </a>
             </div>
           </div>
 
