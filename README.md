@@ -22,6 +22,7 @@ The active application is defined by `app/`, `components/`, `data/`, and `lib/`.
 - `/platform` — intelligence layer and integration model
 - `/services` — proposed Continuity Pilot
 - `/contact` — institutional enquiry route
+- `/verify` — official public-contact verification route
 
 The repository also contains a synthetic controlled demo under `/pilot` and related routes. Demo data is not operational institution or customer data. The current Tajikistan evaluation track is intended to demonstrate investigation continuity, evidence lineage, accountable human review, and regulator-ready output without implying an active institutional pilot. Placeholder routes are excluded from the public sitemap until their content is complete.
 
