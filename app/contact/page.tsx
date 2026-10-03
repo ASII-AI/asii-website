@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function ContactPage() {
@@ -57,45 +58,28 @@ export default function ContactPage() {
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_1.4fr]">
         <section className="rounded-2xl border border-blue-300/15 bg-panel/80 p-8 shadow-2xl shadow-cyan-900/20">
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-300">
-            ASII Continuity Pilot
+            ASII Institutional Contact
           </p>
 
           <h1 className="mt-3 text-4xl font-semibold text-white">
-            Start a pilot conversation
+            Institutional enquiries
           </h1>
 
           <p className="mt-5 leading-relaxed text-blue-100/80">
-            Discuss how ASII can help your institution improve financial crime
-            intelligence continuity across Travel Rule, crypto risk,
-            investigations, sanctions, and regulator-ready workflows.
+            Discuss a scoped ASII continuity evaluation, institutional use case,
+            or strategic technology conversation without sharing confidential
+            case data or sensitive customer information.
           </p>
 
-          <div className="mt-8 space-y-4 text-sm text-blue-100/75">
+          <div className="mt-8 space-y-5 text-sm text-blue-100/75">
             <div>
-              <strong className="text-white">Founder & CEO</strong>
-              <br />
-              Sukhrob Ziyovuddinov
-            </div>
-
-            <div>
-              <strong className="text-white">Email</strong>
+              <strong className="text-white">Corporate email</strong>
               <br />
               <a
                 href="mailto:contact@asii.site"
                 className="break-words text-cyan-300 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
               >
                 contact@asii.site
-              </a>
-            </div>
-
-            <div>
-              <strong className="text-white">WhatsApp</strong>
-              <br />
-              <a
-                href="https://wa.me/971547590101"
-                className="break-words text-cyan-300 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
-              >
-                +971 54 759 01 01
               </a>
             </div>
 
@@ -113,10 +97,39 @@ export default function ContactPage() {
             </div>
           </div>
 
+          <div className="mt-8 rounded-xl border border-blue-300/15 bg-bg/35 p-5">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+              <div className="w-fit rounded-lg bg-white p-2">
+                <Image
+                  src="/asii-contact-verify-qr.svg"
+                  alt="QR code linking to ASII public contact verification"
+                  width={176}
+                  height={176}
+                  priority={false}
+                />
+              </div>
+              <div>
+                <p className="font-medium text-white">
+                  Verify ASII public contact channels
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-blue-100/65">
+                  Scan the QR code or open the verification page on the official
+                  ASII domain.
+                </p>
+                <Link
+                  href="/verify"
+                  className="mt-3 inline-flex text-sm text-cyan-300 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
+                >
+                  asii.site/verify →
+                </Link>
+              </div>
+            </div>
+          </div>
+
           <div className="mt-8">
             <Link
               href="/pilot"
-              className="text-sm text-cyan-300 hover:text-cyan-200"
+              className="text-sm text-cyan-300 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
             >
               Review the Continuity Pilot →
             </Link>
