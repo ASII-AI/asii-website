@@ -70,8 +70,8 @@ export default function VerifyPage() {
 
           <div className="mt-8 rounded-xl border border-amber-300/15 bg-amber-300/5 p-5 text-sm leading-relaxed text-blue-100/70">
             This page does not verify regulatory status, partnerships, customer
-            relationships, deployments, individuals, or third-party accounts.
-            Do not send confidential case data, customer personal data, or
+            relationships, deployments, individuals, or third-party accounts. Do
+            not send confidential case data, customer personal data, or
             sensitive investigative material to an unverified channel.
           </div>
 
