@@ -363,6 +363,10 @@ export function transitionCase(
         ...audited,
         analystRationale: rationale,
         rationaleSavedAt: action.at,
+        escalatedAt: null,
+        completenessCheckedAt: null,
+        mlroApproval: null,
+        reportGeneratedAt: null,
       };
     }
 

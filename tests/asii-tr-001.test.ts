@@ -30,6 +30,70 @@ function readyForApproval() {
 }
 
 describe("ASII-TR-001 canonical demo state", () => {
+  it("invalidates downstream review and report gates when rationale is saved again", () => {
+    let state = readyForApproval();
+    state = transitionCase(state, {
+      type: "APPROVE_BY_MLRO",
+      actor: "mlro-001",
+      at: "2026-10-02T10:15:00Z",
+      rationale: "Approved for controlled demo output.",
+    });
+    state = transitionCase(state, {
+      type: "GENERATE_REPORT",
+      actor: "analyst-001",
+      at: "2026-10-02T10:20:00Z",
+    });
+    const priorEvents = [...state.auditEvents];
+    state = transitionCase(state, {
+      type: "SAVE_RATIONALE",
+      actor: "analyst-001",
+      at: "2026-10-02T10:25:00Z",
+      rationale: "New evidence changes the analyst assessment.",
+    });
+
+    expect(getCaseStage(state)).toBe("RATIONALE_SAVED");
+    expect(state.escalatedAt).toBeNull();
+    expect(state.completenessCheckedAt).toBeNull();
+    expect(state.mlroApproval).toBeNull();
+    expect(state.reportGeneratedAt).toBeNull();
+    expect(canExport(state)).toBe(false);
+    expect(state.auditEvents.slice(0, priorEvents.length)).toEqual(priorEvents);
+    expect(state.auditEvents.at(-1)?.eventType).toBe("RATIONALE_SAVED");
+    expect(() =>
+      transitionCase(state, {
+        type: "GENERATE_REPORT",
+        actor: "analyst-001",
+        at: "2026-10-02T10:26:00Z",
+      }),
+    ).toThrow("Report generation blocked");
+    expect(() =>
+      transitionCase(state, {
+        type: "APPROVE_BY_MLRO",
+        actor: "mlro-001",
+        at: "2026-10-02T10:27:00Z",
+        rationale: "Cannot reuse prior completeness check.",
+      }),
+    ).toThrow("Completeness check must be completed");
+    state = transitionCase(state, {
+      type: "ESCALATE_TO_MLRO",
+      actor: "analyst-001",
+      at: "2026-10-02T10:30:00Z",
+    });
+    state = transitionCase(state, {
+      type: "RUN_COMPLETENESS_CHECK",
+      actor: "analyst-001",
+      at: "2026-10-02T10:35:00Z",
+    });
+    state = transitionCase(state, {
+      type: "APPROVE_BY_MLRO",
+      actor: "mlro-001",
+      at: "2026-10-02T10:40:00Z",
+      rationale: "Reviewed the updated assessment.",
+    });
+    expect(canExport(state)).toBe(true);
+    expect(state.mlroApproval?.approvedAt).toBe("2026-10-02T10:40:00Z");
+  });
+
   it("starts with seven synthetic signals and evidence completeness at 62%", () => {
     const state = createInitialDemoCase();
 
