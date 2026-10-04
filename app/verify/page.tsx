@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Public Contact Verification | ASII",
+  title: "Public Contact Verification",
   description:
     "Verify ASII's official public domain, institutional email, and LinkedIn channel.",
   alternates: {
