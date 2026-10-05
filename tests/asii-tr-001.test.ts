@@ -173,9 +173,7 @@ describe("ASII-TR-001 canonical demo state", () => {
     });
 
     const approvedVersion = state.decisionContextVersion ?? 1;
-    expect(state.completenessCheckedDecisionContextVersion).toBe(
-      approvedVersion,
-    );
+    expect(state.completenessCheckedDecisionContextVersion).toBe(approvedVersion);
     expect(state.mlroApproval?.decisionContextVersion).toBe(approvedVersion);
     expect(canExport(state)).toBe(true);
 
@@ -239,9 +237,7 @@ describe("ASII-TR-001 canonical demo state", () => {
     });
 
     expect(state.analystRationale).toBe(priorRationale);
-    expect(state.decisionContextVersion).toBe(
-      priorDecisionContextVersion + 1,
-    );
+    expect(state.decisionContextVersion).toBe(priorDecisionContextVersion + 1);
     expect(state.rationaleSavedAt).not.toBeNull();
     expect(state.escalatedAt).toBeNull();
     expect(state.completenessCheckedAt).toBeNull();
