@@ -359,7 +359,9 @@ export function transitionCase(
           ? null
           : state.completenessCheckedAt,
         mlroApproval: hadDownstreamReview ? null : state.mlroApproval,
-        reportGeneratedAt: hadDownstreamReview ? null : state.reportGeneratedAt,
+        reportGeneratedAt: hadDownstreamReview
+          ? null
+          : state.reportGeneratedAt,
       };
 
       if (!hadDownstreamReview) {
