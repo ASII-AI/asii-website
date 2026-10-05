@@ -345,9 +345,9 @@ export function transitionCase(
 
       const hadDownstreamReview = Boolean(
         state.escalatedAt ||
-          state.completenessCheckedAt ||
-          state.mlroApproval ||
-          state.reportGeneratedAt,
+        state.completenessCheckedAt ||
+        state.mlroApproval ||
+        state.reportGeneratedAt,
       );
 
       const withEvidence = {
