@@ -17,7 +17,8 @@ export type AuditEventType =
   | "COMPLETENESS_CHECK_COMPLETED"
   | "MLRO_APPROVED"
   | "REPORT_GENERATED"
-  | "EXPORT_REQUESTED";
+  | "EXPORT_REQUESTED"
+  | "DOWNSTREAM_REVIEW_INVALIDATED";
 
 export type VerificationState = "VERIFIED" | "NEEDS_REVIEW" | "GAP";
 
@@ -342,11 +343,41 @@ export function transitionCase(
         auditEventId: audit.auditEventId,
       };
 
-      return {
+      const hadDownstreamReview = Boolean(
+        state.escalatedAt ||
+        state.completenessCheckedAt ||
+        state.mlroApproval ||
+        state.reportGeneratedAt,
+      );
+
+      const withEvidence = {
         ...state,
         evidence,
         auditEvents: [...state.auditEvents, audit],
       };
+
+      if (!hadDownstreamReview) {
+        return withEvidence;
+      }
+
+      const invalidated = {
+        ...withEvidence,
+        escalatedAt: null,
+        completenessCheckedAt: null,
+        mlroApproval: null,
+        reportGeneratedAt: null,
+      };
+
+      return appendAuditEvent(
+        invalidated,
+        "DOWNSTREAM_REVIEW_INVALIDATED",
+        action.actor,
+        action.at,
+        {
+          reason: "evidence-updated",
+          evidenceObjectId: action.evidenceObjectId,
+        },
+      ).state;
     }
 
     case "SAVE_RATIONALE": {
