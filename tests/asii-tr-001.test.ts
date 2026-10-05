@@ -175,6 +175,52 @@ describe("ASII-TR-001 canonical demo state", () => {
     ]);
   });
 
+  it("invalidates downstream review when evidence changes after approval", () => {
+    let state = readyForApproval();
+    state = transitionCase(state, {
+      type: "APPROVE_BY_MLRO",
+      actor: "mlro-001",
+      at: "2026-10-02T10:15:00Z",
+      rationale: "Approved for controlled demo output.",
+    });
+    state = transitionCase(state, {
+      type: "GENERATE_REPORT",
+      actor: "analyst-001",
+      at: "2026-10-02T10:20:00Z",
+    });
+
+    const priorRationale = state.analystRationale;
+    state = transitionCase(state, {
+      type: "LINK_EVIDENCE",
+      evidenceObjectId: "EV-005",
+      actor: "analyst-001",
+      at: "2026-10-02T10:25:00Z",
+      analystAction: "confirmed-gap",
+      rationale: "Beneficiary institution details remain incomplete.",
+    });
+
+    expect(state.analystRationale).toBe(priorRationale);
+    expect(state.rationaleSavedAt).not.toBeNull();
+    expect(state.escalatedAt).toBeNull();
+    expect(state.completenessCheckedAt).toBeNull();
+    expect(state.mlroApproval).toBeNull();
+    expect(state.reportGeneratedAt).toBeNull();
+    expect(getCaseStage(state)).toBe("RATIONALE_SAVED");
+    expect(canExport(state)).toBe(false);
+    expect(state.auditEvents.at(-2)).toMatchObject({
+      eventType: "EVIDENCE_LINKED",
+      details: { evidenceObjectId: "EV-005" },
+    });
+    expect(state.auditEvents.at(-1)).toMatchObject({
+      eventType: "DOWNSTREAM_REVIEW_INVALIDATED",
+      actor: "analyst-001",
+      details: {
+        reason: "evidence-updated",
+        evidenceObjectId: "EV-005",
+      },
+    });
+  });
+
   it("records evidence lineage changes with an attributable audit event", () => {
     let state = createInitialDemoCase();
 
