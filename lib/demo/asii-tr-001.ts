@@ -287,9 +287,7 @@ export function createInitialDemoCase(): DemoCaseState {
 export function getCaseStage(state: DemoCaseState): CaseStage {
   const decisionContextVersion = getDecisionContextVersion(state);
 
-  if (
-    state.mlroApproval?.decisionContextVersion === decisionContextVersion
-  ) {
+  if (state.mlroApproval?.decisionContextVersion === decisionContextVersion) {
     return "MLRO_APPROVED";
   }
   if (
@@ -306,9 +304,7 @@ export function getCaseStage(state: DemoCaseState): CaseStage {
 export function getEvidenceCompleteness(state: DemoCaseState): number {
   const decisionContextVersion = getDecisionContextVersion(state);
 
-  if (
-    state.mlroApproval?.decisionContextVersion === decisionContextVersion
-  ) {
+  if (state.mlroApproval?.decisionContextVersion === decisionContextVersion) {
     return 92;
   }
   if (state.rationaleSavedAt) return 78;
