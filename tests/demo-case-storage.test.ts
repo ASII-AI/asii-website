@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createInitialDemoCase, transitionCase } from "../lib/demo/asii-tr-001";
+import {
+  createInitialDemoCase,
+  getExportDecision,
+  transitionCase,
+} from "../lib/demo/asii-tr-001";
 import {
   DEMO_CASE_STORAGE_KEY,
   restoreDemoCase,
@@ -35,6 +39,54 @@ describe("demo case persistence", () => {
       escalatedAt: "2026-10-02T12:01:00Z",
     });
     expect(restored?.auditEvents).toHaveLength(2);
+  });
+
+  it("restores legacy unversioned approvals as stale rather than current", () => {
+    let state = createInitialDemoCase();
+    state = transitionCase(state, {
+      type: "SAVE_RATIONALE",
+      actor: "demo-analyst",
+      at: "2026-10-02T12:00:00Z",
+      rationale: "Synthetic rationale for legacy storage test.",
+    });
+    state = transitionCase(state, {
+      type: "ESCALATE_TO_MLRO",
+      actor: "demo-analyst",
+      at: "2026-10-02T12:01:00Z",
+    });
+    state = transitionCase(state, {
+      type: "RUN_COMPLETENESS_CHECK",
+      actor: "demo-analyst",
+      at: "2026-10-02T12:02:00Z",
+    });
+    state = transitionCase(state, {
+      type: "APPROVE_BY_MLRO",
+      actor: "demo-mlro",
+      at: "2026-10-02T12:03:00Z",
+      rationale: "Approved before decision-context version binding existed.",
+    });
+
+    const legacyState = {
+      ...state,
+      decisionContextVersion: undefined,
+      completenessCheckedDecisionContextVersion: undefined,
+      mlroApproval: state.mlroApproval
+        ? {
+            ...state.mlroApproval,
+            decisionContextVersion: undefined,
+          }
+        : null,
+    };
+
+    const restored = restoreDemoCase(
+      JSON.stringify({ version: 1, state: legacyState }),
+    );
+
+    expect(restored).not.toBeNull();
+    expect(getExportDecision(restored!)).toMatchObject({
+      allowed: false,
+      blockers: ["Completeness check is stale", "MLRO approval is stale"],
+    });
   });
 
   it("rejects malformed or non-canonical stored state", () => {
