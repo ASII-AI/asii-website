@@ -354,20 +354,22 @@ export function transitionCase(
         ...state,
         evidence,
         auditEvents: [...state.auditEvents, audit],
-        escalatedAt: hadDownstreamReview ? null : state.escalatedAt,
-        completenessCheckedAt: hadDownstreamReview
-          ? null
-          : state.completenessCheckedAt,
-        mlroApproval: hadDownstreamReview ? null : state.mlroApproval,
-        reportGeneratedAt: hadDownstreamReview ? null : state.reportGeneratedAt,
       };
 
       if (!hadDownstreamReview) {
         return withEvidence;
       }
 
+      const invalidated = {
+        ...withEvidence,
+        escalatedAt: null,
+        completenessCheckedAt: null,
+        mlroApproval: null,
+        reportGeneratedAt: null,
+      };
+
       return appendAuditEvent(
-        withEvidence,
+        invalidated,
         "DOWNSTREAM_REVIEW_INVALIDATED",
         action.actor,
         action.at,
