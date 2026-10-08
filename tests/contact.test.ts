@@ -30,6 +30,37 @@ describe("parseContactSubmission", () => {
     ).toBeNull();
   });
 
+  it("rejects oversized or pathological email input without regex backtracking", () => {
+    const longEmail = "a".repeat(100_000) + "@example.com";
+    expect(
+      parseContactSubmission({ ...validSubmission, email: longEmail }),
+    ).toBeNull();
+    expect(
+      parseContactSubmission({
+        ...validSubmission,
+        email: "analyst@" + "x".repeat(100_000) + ".",
+      }),
+    ).toBeNull();
+  });
+
+  it("rejects malformed email syntax while preserving valid addresses", () => {
+    for (const email of [
+      "analyst@@example.com",
+      "analyst@example.",
+      "@example.com",
+      "analyst@.com",
+      "analyst@exam ple.com",
+    ]) {
+      expect(parseContactSubmission({ ...validSubmission, email })).toBeNull();
+    }
+    expect(
+      parseContactSubmission({
+        ...validSubmission,
+        email: "team+aml@example.co.uk",
+      }),
+    ).not.toBeNull();
+  });
+
   it("normalises missing optional fields to empty strings", () => {
     const result = parseContactSubmission({
       name: "Test Analyst",

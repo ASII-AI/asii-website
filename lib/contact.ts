@@ -9,7 +9,22 @@ export type ContactSubmission = {
   message: string;
 };
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function isValidEmail(email: string): boolean {
+  // Bound user-controlled input before validation to avoid costly processing.
+  if (email.length === 0 || email.length > 254) {
+    return false;
+  }
+
+  const at = email.indexOf("@");
+  const dot = email.lastIndexOf(".");
+  return (
+    at > 0 &&
+    at === email.lastIndexOf("@") &&
+    dot > at + 1 &&
+    dot < email.length - 1 &&
+    !/\s/u.test(email)
+  );
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -43,7 +58,7 @@ export function parseContactSubmission(
 
   if (
     submission.name.length < 2 ||
-    !EMAIL_RE.test(submission.email) ||
+    !isValidEmail(submission.email) ||
     submission.organisation.length < 2 ||
     submission.message.length < 10
   ) {
