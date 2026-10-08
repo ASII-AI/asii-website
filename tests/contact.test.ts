@@ -54,7 +54,10 @@ describe("parseContactSubmission", () => {
       expect(parseContactSubmission({ ...validSubmission, email })).toBeNull();
     }
     expect(
-      parseContactSubmission({ ...validSubmission, email: "team+aml@example.co.uk" }),
+      parseContactSubmission({
+        ...validSubmission,
+        email: "team+aml@example.co.uk",
+      }),
     ).not.toBeNull();
   });
 
