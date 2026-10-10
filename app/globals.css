@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.ts";
 
 :root {
   color-scheme: dark;
@@ -62,7 +61,9 @@ textarea:focus-visible {
 }
 
 .network-grid {
-  background-image: theme("backgroundImage.grid");
+  background-image:
+    linear-gradient(rgba(47, 111, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 111, 255, 0.12) 1px, transparent 1px);
   background-size: 44px 44px;
 }
 
