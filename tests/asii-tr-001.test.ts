@@ -163,6 +163,42 @@ describe("ASII-TR-001 canonical demo state", () => {
     });
   });
 
+  it("binds completeness and MLRO approval to the current decision context version", () => {
+    let state = readyForApproval();
+    state = transitionCase(state, {
+      type: "APPROVE_BY_MLRO",
+      actor: "mlro-001",
+      at: "2026-10-02T10:15:00Z",
+      rationale: "Approved for controlled demo output.",
+    });
+
+    const approvedVersion = state.decisionContextVersion ?? 1;
+    expect(state.completenessCheckedDecisionContextVersion).toBe(approvedVersion);
+    expect(state.mlroApproval?.decisionContextVersion).toBe(approvedVersion);
+    expect(canExport(state)).toBe(true);
+
+    const staleState = {
+      ...state,
+      decisionContextVersion: approvedVersion + 1,
+    };
+
+    expect(getCaseStage(staleState)).toBe("ESCALATED_TO_MLRO");
+    expect(getExportDecision(staleState)).toMatchObject({
+      allowed: false,
+      blockers: ["Completeness check is stale", "MLRO approval is stale"],
+    });
+    expect(() =>
+      transitionCase(staleState, {
+        type: "APPROVE_BY_MLRO",
+        actor: "mlro-001",
+        at: "2026-10-02T10:16:00Z",
+        rationale: "Stale completeness must not authorize approval.",
+      }),
+    ).toThrow(
+      "Completeness check must match current decision context before MLRO approval",
+    );
+  });
+
   it("returns explicit blockers before export is eligible", () => {
     const decision = getExportDecision(createInitialDemoCase());
 
@@ -190,6 +226,7 @@ describe("ASII-TR-001 canonical demo state", () => {
     });
 
     const priorRationale = state.analystRationale;
+    const priorDecisionContextVersion = state.decisionContextVersion ?? 1;
     state = transitionCase(state, {
       type: "LINK_EVIDENCE",
       evidenceObjectId: "EV-005",
@@ -200,6 +237,7 @@ describe("ASII-TR-001 canonical demo state", () => {
     });
 
     expect(state.analystRationale).toBe(priorRationale);
+    expect(state.decisionContextVersion).toBe(priorDecisionContextVersion + 1);
     expect(state.rationaleSavedAt).not.toBeNull();
     expect(state.escalatedAt).toBeNull();
     expect(state.completenessCheckedAt).toBeNull();

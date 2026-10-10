@@ -61,6 +61,7 @@ export interface MlroApproval {
   rationale: string;
   approvedAt: string;
   auditEventId: string;
+  decisionContextVersion?: number;
 }
 
 export interface DemoCaseState {
@@ -70,8 +71,10 @@ export interface DemoCaseState {
   evidence: EvidenceObject[];
   analystRationale: string | null;
   rationaleSavedAt: string | null;
+  decisionContextVersion?: number;
   escalatedAt: string | null;
   completenessCheckedAt: string | null;
+  completenessCheckedDecisionContextVersion?: number | null;
   mlroApproval: MlroApproval | null;
   reportGeneratedAt: string | null;
   auditEvents: AuditEvent[];
@@ -224,6 +227,15 @@ function assertNonBlank(value: string, field: string): string {
   return normalized;
 }
 
+function getDecisionContextVersion(state: DemoCaseState): number {
+  const version = state.decisionContextVersion;
+  return typeof version === "number" &&
+    Number.isInteger(version) &&
+    version > 0
+    ? version
+    : 1;
+}
+
 export function createInitialDemoCase(): DemoCaseState {
   const signals: DemoSignal[] = syntheticSignals.map((signal) => ({
     ...signal,
@@ -262,8 +274,10 @@ export function createInitialDemoCase(): DemoCaseState {
     evidence,
     analystRationale: null,
     rationaleSavedAt: null,
+    decisionContextVersion: 1,
     escalatedAt: null,
     completenessCheckedAt: null,
+    completenessCheckedDecisionContextVersion: null,
     mlroApproval: null,
     reportGeneratedAt: null,
     auditEvents: [],
@@ -271,28 +285,52 @@ export function createInitialDemoCase(): DemoCaseState {
 }
 
 export function getCaseStage(state: DemoCaseState): CaseStage {
-  if (state.mlroApproval) return "MLRO_APPROVED";
-  if (state.completenessCheckedAt) return "COMPLETENESS_CHECKED";
+  const decisionContextVersion = getDecisionContextVersion(state);
+
+  if (state.mlroApproval?.decisionContextVersion === decisionContextVersion) {
+    return "MLRO_APPROVED";
+  }
+  if (
+    state.completenessCheckedAt &&
+    state.completenessCheckedDecisionContextVersion === decisionContextVersion
+  ) {
+    return "COMPLETENESS_CHECKED";
+  }
   if (state.escalatedAt) return "ESCALATED_TO_MLRO";
   if (state.rationaleSavedAt) return "RATIONALE_SAVED";
   return "ANALYST_REVIEW";
 }
 
 export function getEvidenceCompleteness(state: DemoCaseState): number {
-  if (state.mlroApproval) return 92;
+  const decisionContextVersion = getDecisionContextVersion(state);
+
+  if (state.mlroApproval?.decisionContextVersion === decisionContextVersion) {
+    return 92;
+  }
   if (state.rationaleSavedAt) return 78;
   return 62;
 }
 
 export function getExportDecision(state: DemoCaseState): ExportDecision {
   const blockers: string[] = [];
+  const decisionContextVersion = getDecisionContextVersion(state);
 
   if (!state.rationaleSavedAt) blockers.push("Analyst rationale is not saved");
   if (!state.escalatedAt) blockers.push("Case is not escalated to MLRO");
   if (!state.completenessCheckedAt) {
     blockers.push("Completeness check is not completed");
+  } else if (
+    state.completenessCheckedDecisionContextVersion !== decisionContextVersion
+  ) {
+    blockers.push("Completeness check is stale");
   }
-  if (!state.mlroApproval) blockers.push("MLRO approval is not recorded");
+  if (!state.mlroApproval) {
+    blockers.push("MLRO approval is not recorded");
+  } else if (
+    state.mlroApproval.decisionContextVersion !== decisionContextVersion
+  ) {
+    blockers.push("MLRO approval is stale");
+  }
 
   return {
     allowed: blockers.length === 0,
@@ -327,12 +365,16 @@ export function transitionCase(
         throw new Error(`Unknown evidence: ${action.evidenceObjectId}`);
       }
 
+      const decisionContextVersion = getDecisionContextVersion(state) + 1;
       const audit = nextAuditEvent(
         state,
         "EVIDENCE_LINKED",
         action.actor,
         action.at,
-        { evidenceObjectId: action.evidenceObjectId },
+        {
+          evidenceObjectId: action.evidenceObjectId,
+          decisionContextVersion,
+        },
       );
 
       const evidence = [...state.evidence];
@@ -352,6 +394,7 @@ export function transitionCase(
 
       const withEvidence = {
         ...state,
+        decisionContextVersion,
         evidence,
         auditEvents: [...state.auditEvents, audit],
       };
@@ -364,6 +407,7 @@ export function transitionCase(
         ...withEvidence,
         escalatedAt: null,
         completenessCheckedAt: null,
+        completenessCheckedDecisionContextVersion: null,
         mlroApproval: null,
         reportGeneratedAt: null,
       };
@@ -382,20 +426,23 @@ export function transitionCase(
 
     case "SAVE_RATIONALE": {
       const rationale = assertNonBlank(action.rationale, "Analyst rationale");
+      const decisionContextVersion = getDecisionContextVersion(state) + 1;
       const { state: audited } = appendAuditEvent(
         state,
         "RATIONALE_SAVED",
         action.actor,
         action.at,
-        { rationale },
+        { rationale, decisionContextVersion },
       );
 
       return {
         ...audited,
         analystRationale: rationale,
         rationaleSavedAt: action.at,
+        decisionContextVersion,
         escalatedAt: null,
         completenessCheckedAt: null,
+        completenessCheckedDecisionContextVersion: null,
         mlroApproval: null,
         reportGeneratedAt: null,
       };
@@ -426,17 +473,22 @@ export function transitionCase(
         );
       }
 
+      const decisionContextVersion = getDecisionContextVersion(state);
       const { state: audited } = appendAuditEvent(
         state,
         "COMPLETENESS_CHECK_COMPLETED",
         action.actor,
         action.at,
-        { evidenceCompleteness: getEvidenceCompleteness(state) },
+        {
+          evidenceCompleteness: getEvidenceCompleteness(state),
+          decisionContextVersion,
+        },
       );
 
       return {
         ...audited,
         completenessCheckedAt: action.at,
+        completenessCheckedDecisionContextVersion: decisionContextVersion,
       };
     }
 
@@ -447,13 +499,23 @@ export function transitionCase(
         );
       }
 
+      const decisionContextVersion = getDecisionContextVersion(state);
+      if (
+        state.completenessCheckedDecisionContextVersion !==
+        decisionContextVersion
+      ) {
+        throw new Error(
+          "Completeness check must match current decision context before MLRO approval",
+        );
+      }
+
       const rationale = assertNonBlank(action.rationale, "MLRO rationale");
       const audit = nextAuditEvent(
         state,
         "MLRO_APPROVED",
         action.actor,
         action.at,
-        { rationale },
+        { rationale, decisionContextVersion },
       );
 
       return {
@@ -463,6 +525,7 @@ export function transitionCase(
           rationale,
           approvedAt: action.at,
           auditEventId: audit.auditEventId,
+          decisionContextVersion,
         },
         auditEvents: [...state.auditEvents, audit],
       };
